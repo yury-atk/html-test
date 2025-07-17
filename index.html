@@ -2,29 +2,39 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Запрет масштабирования и прокрутки -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
   <title>Мобильное Приложение</title>
   <style>
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    body, html {
+    html, body {
+      margin: 0;
+      padding: 0;
       height: 100%;
+      overflow: hidden; /* запрет прокрутки */
       background-color: #f2f2f7;
+      -webkit-user-select: none; /* запрет выделения текста на iOS */
+      -webkit-touch-callout: none; /* запрет долгого тап-меню на iOS */
     }
 
     .app {
+      height: 100%;
+      width: 100%;
       max-width: 420px;
       margin: 0 auto;
-      height: 100%;
       background-color: white;
-      border: 1px solid #ccc;
-      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content {
+      flex: 1;
       overflow: hidden;
+      position: relative;
     }
 
     .screen {
@@ -32,7 +42,10 @@
       flex-direction: column;
       height: 100%;
       padding: 20px;
-      transition: all 0.3s ease;
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
     }
 
     .screen.active {
@@ -49,21 +62,23 @@
       padding: 12px 20px;
       margin-top: 10px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background-color: #007aff;
       color: white;
       font-size: 16px;
       cursor: pointer;
+      transition: background-color 0.15s;
+      touch-action: manipulation;
     }
 
-    .button.secondary {
-      background-color: #ccc;
-      color: #333;
+    .button:active {
+      background-color: #005ecb;
     }
 
     .list {
       list-style: none;
       margin-top: 10px;
+      padding: 0;
     }
 
     .list-item {
@@ -74,55 +89,86 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
-    .nav-back {
-      margin-bottom: 20px;
+    /* Нижняя навигация */
+    .tabbar {
+      height: 60px;
+      display: flex;
+      border-top: 1px solid #ccc;
+      background: #ffffff;
+    }
+
+    .tabbar button {
+      flex: 1;
+      border: none;
+      background: none;
       font-size: 14px;
-      color: #007aff;
+      color: #888;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 0;
       cursor: pointer;
+    }
+
+    .tabbar button.active {
+      color: #007aff;
+      font-weight: 600;
+    }
+
+    .tabbar button:active {
+      background-color: #f2f2f2;
     }
 
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- Home Screen -->
-    <div class="screen active" id="homeScreen">
-      <div class="header">Добро пожаловать 👋</div>
-      <p>Это нативное мобильное веб-приложение.</p>
-      <button class="button" onclick="goTo('listScreen')">Перейти к списку</button>
-      <button class="button" onclick="goTo('aboutScreen')">О приложении</button>
+    <div class="content">
+      <!-- Главная -->
+      <div class="screen active" id="homeScreen">
+        <div class="header">Добро пожаловать 👋</div>
+        <p>Это нативное мобильное веб-приложение.</p>
+        <button class="button" onclick="alert('Привет!')">Сказать привет</button>
+      </div>
+
+      <!-- Список -->
+      <div class="screen" id="listScreen">
+        <div class="header">Список задач</div>
+        <ul class="list">
+          <li class="list-item">📌 Купить продукты</li>
+          <li class="list-item">📞 Позвонить маме</li>
+          <li class="list-item">📚 Прочитать книгу</li>
+          <li class="list-item">💼 Завершить проект</li>
+        </ul>
+        <button class="button" onclick="alert('Задача добавлена!')">➕ Добавить задачу</button>
+      </div>
+
+      <!-- О приложении -->
+      <div class="screen" id="aboutScreen">
+        <div class="header">О приложении</div>
+        <p>Это простое мобильное приложение с нижним меню, кнопками и экранами. Никаких скроллов и масштабирования — как у настоящих приложений!</p>
+      </div>
     </div>
 
-    <!-- List Screen -->
-    <div class="screen" id="listScreen">
-      <div class="nav-back" onclick="goTo('homeScreen')">← Назад</div>
-      <div class="header">Список задач</div>
-      <ul class="list">
-        <li class="list-item">📌 Купить продукты</li>
-        <li class="list-item">📞 Позвонить маме</li>
-        <li class="list-item">📚 Прочитать книгу</li>
-        <li class="list-item">💼 Завершить проект</li>
-      </ul>
-      <button class="button" onclick="alert('Задача добавлена!')">➕ Добавить задачу</button>
-    </div>
-
-    <!-- About Screen -->
-    <div class="screen" id="aboutScreen">
-      <div class="nav-back" onclick="goTo('homeScreen')">← Назад</div>
-      <div class="header">О приложении</div>
-      <p>Это простое мобильное веб-приложение, написанное в одном HTML-файле. Оно демонстрирует списки, кнопки и переходы между экранами.</p>
-      <p>Ты можешь легко встроить сюда свою логику и превратить это в PWA.</p>
+    <!-- Нижняя навигация -->
+    <div class="tabbar">
+      <button onclick="goTo('homeScreen', this)" class="active">🏠<div>Главная</div></button>
+      <button onclick="goTo('listScreen', this)">📋<div>Задачи</div></button>
+      <button onclick="goTo('aboutScreen', this)">ℹ️<div>О нас</div></button>
     </div>
   </div>
 
   <script>
-    function goTo(screenId) {
-      document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.remove('active');
-      });
+    function goTo(screenId, tabButton) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
+
+      document.querySelectorAll('.tabbar button').forEach(btn => btn.classList.remove('active'));
+      if (tabButton) tabButton.classList.add('active');
     }
   </script>
 </body>
 </html>
+
 
